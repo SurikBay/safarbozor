@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafarBozor — To'g'ri narx, yaxshi tanlov</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  :root {
+    --navy: #1a2f5e;
+    --orange: #f47c20;
+    --orange-light: #ff9a3c;
+    --sky: #e8f4fd;
+    --white: #ffffff;
+    --gray: #6b7280;
+    --light: #f9fafb;
+    --border: #e5e7eb;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--navy); }
+
+  /* NAVBAR */
+  nav {
+    background: var(--white);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--navy), #2d4a8a);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .logo-text { font-size: 20px; font-weight: 800; }
+  .logo-text span:first-child { color: var(--navy); }
+  .logo-text span:last-child { color: var(--orange); }
+  .nav-links { display: flex; gap: 6px; align-items: center; }
+  .nav-links a {
+    text-decoration: none; color: var(--navy);
+    font-size: 13px; font-weight: 500;
+    padding: 7px 12px; border-radius: 8px; transition: all 0.2s; cursor: pointer;
+  }
+  .nav-links a:hover { background: var(--sky); color: var(--orange); }
+  .nav-btn { background: var(--orange); color: white !important; border-radius: 8px !important; padding: 7px 16px !important; }
+  .nav-btn:hover { background: #e06b10 !important; color: white !important; }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #2d4a8a 60%, #1a3a6e 100%);
+    padding: 48px 20px 60px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(244,124,32,0.2);
+    border: 1px solid rgba(244,124,32,0.4);
+    color: var(--orange-light);
+    font-size: 12px; font-weight: 600;
+    padding: 5px 14px; border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .hero h1 { color: white; font-size: 28px; font-weight: 800; line-height: 1.3; margin-bottom: 10px; }
+  .hero h1 span { color: var(--orange-light); }
+  .hero p { color: rgba(255,255,255,0.75); font-size: 15px; margin-bottom: 28px; }
+  .search-box {
+    background: white; border-radius: 16px; padding: 16px;
+    max-width: 500px; margin: 0 auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+  .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .search-input {
+    flex: 1; border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 10px 14px; font-size: 14px; outline: none;
+    font-family: 'Inter', sans-serif; color: var(--navy);
+  }
+  .search-input:focus { border-color: var(--orange); }
+  .search-select {
+    border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; font-size: 13px; outline: none;
+    font-family: 'Inter', sans-serif; color: var(--navy);
+    background: white; min-width: 120px;
+  }
+  .search-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--orange), var(--orange-light));
+    color: white; border: none; border-radius: 10px;
+    padding: 12px; font-size: 15px; font-weight: 700;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+  .search-btn:hover { opacity: 0.9; }
+
+  /* STATS */
+  .stats {
+    background: white; padding: 16px 20px;
+    display: flex; justify-content: space-around;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 20px; font-weight: 800; color: var(--orange); }
+  .stat-label { font-size: 11px; color: var(--gray); font-weight: 500; }
+
+  /* CATEGORIES */
+  .section { padding: 24px 16px; }
+  .section-title { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 16px; }
+  .categories {
+    display: flex; gap: 10px; overflow-x: auto;
+    padding-bottom: 8px; scrollbar-width: none;
+  }
+  .categories::-webkit-scrollbar { display: none; }
+  .cat-card {
+    flex-shrink: 0; background: white;
+    border: 2px solid var(--border); border-radius: 14px;
+    padding: 14px 18px; text-align: center;
+    cursor: pointer; transition: all 0.2s; min-width: 90px;
+  }
+  .cat-card:hover, .cat-card.active {
+    border-color: var(--orange);
+    background: #fff8f2;
+  }
+  .cat-icon { font-size: 26px; margin-bottom: 6px; }
+  .cat-name { font-size: 12px; font-weight: 600; color: var(--navy); }
+
+  /* FILTER */
+  .filter-bar {
+    background: white; padding: 12px 16px;
+    display: flex; gap: 8px; overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+  }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .filter-chip {
+    flex-shrink: 0; border: 1.5px solid var(--border);
+    background: white; border-radius: 20px;
+    padding: 6px 14px; font-size: 13px; font-weight: 500;
+    color: var(--navy); cursor: pointer; white-space: nowrap;
+    font-family: 'Inter', sans-serif; transition: all 0.2s;
+  }
+  .filter-chip.active { border-color: var(--orange); background: #fff8f2; color: var(--orange); }
+
+  /* TOUR CARDS */
+  .tours-grid { display: flex; flex-direction: column; gap: 14px; }
+  .tour-card {
+    background: white; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1px solid var(--border); transition: all 0.2s;
+  }
+  .tour-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+  .tour-emoji-img {
+    width: 100%; height: 160px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 70px; position: relative;
+  }
+  .tour-badge-label {
+    position: absolute; top: 12px; left: 12px;
+    color: white; font-size: 11px; font-weight: 700;
+    padding: 4px 10px; border-radius: 20px;
+  }
+  .tour-body { padding: 14px; }
+  .tour-company { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .company-logo {
+    width: 24px; height: 24px;
+    background: var(--navy); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 11px; font-weight: 700;
+  }
+  .company-name { font-size: 12px; color: var(--gray); font-weight: 500; }
+  .tour-title { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 8px; line-height: 1.3; }
+  .tour-details { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .detail-tag {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 12px; color: var(--gray);
+    background: var(--light); padding: 4px 8px; border-radius: 6px;
+  }
+  .tour-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px; border-top: 1px solid var(--border);
+  }
+  .tour-price { font-size: 20px; font-weight: 800; color: var(--orange); }
+  .tour-price span { font-size: 12px; color: var(--gray); font-weight: 400; }
+  .tour-btns { display: flex; gap: 8px; }
+  .btn-compare {
+    border: 1.5px solid var(--navy); background: transparent;
+    color: var(--navy); border-radius: 8px; padding: 8px 12px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: 'Inter', sans-serif; transition: all 0.2s;
+  }
+  .btn-compare:hover { background: var(--navy); color: white; }
+  .btn-buy {
+    background: linear-gradient(135deg, var(--orange), var(--orange-light));
+    color: white; border: none; border-radius: 8px;
+    padding: 8px 16px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+
+  /* LOADING */
+  .loading {
+    text-align: center; padding: 40px;
+    color: var(--gray); font-size: 15px;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--orange);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 48px 20px; color: var(--gray); }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+
+  /* HOW IT WORKS */
+  .how-section {
+    background: linear-gradient(135deg, var(--navy), #2d4a8a);
+    padding: 32px 16px;
+  }
+  .how-title { color: white; font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 24px; }
+  .how-steps { display: flex; flex-direction: column; gap: 16px; }
+  .how-step {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 14px; padding: 16px;
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .step-num {
+    background: var(--orange); color: white;
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; flex-shrink: 0;
+  }
+  .step-text h4 { color: white; font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .step-text p { color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.5; }
+
+  /* TOUR DETAIL PAGE */
+  .detail-hero {
+    height: 220px; display: flex; align-items: center;
+    justify-content: center; font-size: 80px;
+    position: relative;
+  }
+  .back-btn {
+    position: absolute; top: 16px; left: 16px;
+    background: rgba(0,0,0,0.4); color: white;
+    border: none; border-radius: 10px;
+    padding: 8px 14px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+  .detail-body { padding: 20px 16px; }
+  .detail-title { font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .detail-price { font-size: 28px; font-weight: 800; color: var(--orange); margin-bottom: 16px; }
+  .detail-section-title { font-size: 15px; font-weight: 700; color: var(--navy); margin: 16px 0 8px; }
+  .detail-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .detail-tag {
+    background: var(--sky); color: var(--navy);
+    padding: 6px 12px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+  }
+  .detail-desc { font-size: 14px; color: var(--gray); line-height: 1.7; margin-bottom: 20px; }
+  .company-info-box {
+    background: var(--light); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px; margin-bottom: 20px;
+  }
+  .company-info-box h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .company-info-box p { font-size: 13px; color: var(--gray); }
+  .btn-contact {
+    width: 100%;
+    background: linear-gradient(135deg, var(--orange), var(--orange-light));
+    color: white; border: none; border-radius: 12px;
+    padding: 16px; font-size: 16px; font-weight: 700;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    margin-bottom: 10px;
+  }
+  .btn-whatsapp {
+    width: 100%;
+    background: #25d366;
+    color: white; border: none; border-radius: 12px;
+    padding: 14px; font-size: 15px; font-weight: 700;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+
+  /* ADMIN PAGE */
+  .admin-header {
+    background: var(--navy); color: white;
+    padding: 20px 16px; text-align: center;
+  }
+  .admin-header h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .admin-header p { font-size: 13px; opacity: 0.7; }
+  .admin-form { padding: 20px 16px; }
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; display: block; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%; border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 11px 14px;
+    font-size: 14px; outline: none;
+    font-family: 'Inter', sans-serif; color: var(--navy);
+    background: white;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--orange); }
+  .form-textarea { min-height: 100px; resize: vertical; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-check { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .form-check input { width: 18px; height: 18px; accent-color: var(--orange); }
+  .form-check label { font-size: 14px; font-weight: 500; color: var(--navy); }
+  .btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--orange), var(--orange-light));
+    color: white; border: none; border-radius: 12px;
+    padding: 15px; font-size: 16px; font-weight: 700;
+    cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 8px;
+  }
+  .alert {
+    padding: 12px 16px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; margin-bottom: 14px;
+    display: none;
+  }
+  .alert.success { background: #d1fae5; color: #065f46; display: block; }
+  .alert.error { background: #fee2e2; color: #991b1b; display: block; }
+
+  /* COMPARE BAR */
+  .compare-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--navy); color: white;
+    padding: 12px 16px;
+    display: none; align-items: center; justify-content: space-between;
+    z-index: 200; box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+  }
+  .compare-bar.show { display: flex; }
+  .compare-info { font-size: 14px; font-weight: 600; }
+  .compare-info span { color: var(--orange-light); }
+  .btn-do-compare {
+    background: var(--orange); color: white;
+    border: none; border-radius: 8px;
+    padding: 8px 18px; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 300; align-items: flex-end;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: white; width: 100%;
+    border-radius: 20px 20px 0 0; padding: 20px;
+    max-height: 85vh; overflow-y: auto;
+  }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+  .modal-title { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 16px; text-align: center; }
+  .compare-item {
+    border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 12px; display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 10px;
+  }
+  .compare-item-info h4 { font-size: 14px; font-weight: 700; color: var(--navy); }
+  .compare-item-info p { font-size: 12px; color: var(--gray); margin-top: 2px; }
+  .compare-item-price { font-size: 18px; font-weight: 800; color: var(--orange); }
+  .btn-close-modal {
+    width: 100%; border: 1.5px solid var(--border);
+    background: transparent; border-radius: 10px;
+    padding: 12px; font-size: 14px; font-weight: 600;
+    color: var(--navy); cursor: pointer; font-family: 'Inter', sans-serif;
+    margin-top: 8px;
+  }
+
+  /* FOOTER */
+  footer { background: var(--navy); color: rgba(255,255,255,0.7); padding: 28px 16px; text-align: center; }
+  footer .footer-logo { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  footer .footer-logo span { color: var(--orange); }
+  footer p { font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
+  .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+  .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px; cursor: pointer; }
+  .footer-links a:hover { color: var(--orange); }
+  .footer-copy { font-size: 12px; color: rgba(255,255,255,0.4); }
+
+  .emoji-bg-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+  .emoji-bg-2 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+  .emoji-bg-3 { background: linear-gradient(135deg, #f7971e, #ffd200); }
+  .emoji-bg-4 { background: linear-gradient(135deg, #fc5c7d, #6a3093); }
+  .emoji-bg-5 { background: linear-gradient(135deg, #43cea2, #185a9d); }
+  .emoji-bg-6 { background: linear-gradient(135deg, #ee9ca7, #ffdde1); }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo" onclick="showPage('home')">
+    <div class="logo-icon">✈️</div>
+    <div class="logo-text"><span>Safar</span><span>Bozor</span></div>
+  </div>
+  <div class="nav-links">
+    <a onclick="showPage('home')">Turlar</a>
+    <a onclick="showPage('admin')" class="nav-btn">+ Tur qo'shish</a>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-badge">🇺🇿 O'zbekiston №1 tur agregatori</div>
+    <h1>Eng yaxshi turni<br><span>eng qulay narxda</span> toping</h1>
+    <p>100+ kompaniyaning tur paketlarini solishtiring</p>
+    <div class="search-box">
+      <div class="search-row">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Manzil qidiring...">
+        <select class="search-select" id="categoryFilter">
+          <option value="">Barchasi</option>
+          <option value="Yevropa">Yevropa</option>
+          <option value="Osiyo">Osiyo</option>
+          <option value="Haj/Umra">Haj/Umra</option>
+          <option value="Dengiz">Dengiz</option>
+          <option value="Ichki">Ichki</option>
+        </select>
+      </div>
+      <button class="search-btn" onclick="searchTours()">🔍 Turlarni qidirish</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-item">
+      <div class="stat-num" id="tourCount">...</div>
+      <div class="stat-label">Tur paketi</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="companyCount">...</div>
+      <div class="stat-label">Kompaniya</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">45+</div>
+      <div class="stat-label">Mamlakat</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">Bepul</div>
+      <div class="stat-label">Xizmat</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🌍 Yo'nalishlar</div>
+    <div class="categories">
+      <div class="cat-card active" onclick="filterByCategory(this, '')">
+        <div class="cat-icon">🌐</div>
+        <div class="cat-name">Barchasi</div>
+      </div>
+      <div class="cat-card" onclick="filterByCategory(this, 'Yevropa')">
+        <div class="cat-icon">🏰</div>
+        <div class="cat-name">Yevropa</div>
+      </div>
+      <div class="cat-card" onclick="filterByCategory(this, 'Osiyo')">
+        <div class="cat-icon">🏯</div>
+        <div class="cat-name">Osiyo</div>
+      </div>
+      <div class="cat-card" onclick="filterByCategory(this, 'Haj/Umra')">
+        <div class="cat-icon">🕌</div>
+        <div class="cat-name">Haj/Umra</div>
+      </div>
+      <div class="cat-card" onclick="filterByCategory(this, 'Dengiz')">
+        <div class="cat-icon">🏖️</div>
+        <div class="cat-name">Dengiz</div>
+      </div>
+      <div class="cat-card" onclick="filterByCategory(this, 'Ichki')">
+        <div class="cat-icon">🏔️</div>
+        <div class="cat-name">Ichki</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-chip active" onclick="sortTours(this, 'created_at')">🆕 Yangi</button>
+    <button class="filter-chip" onclick="sortTours(this, 'price_asc')">💸 Arzon</button>
+    <button class="filter-chip" onclick="sortTours(this, 'price_desc')">💎 Qimmat</button>
+    <button class="filter-chip" onclick="sortTours(this, 'flight')">✈️ Aviachipta</button>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔥 Tur paketlar</div>
+    <div class="tours-grid" id="toursGrid">
+      <div class="loading"><div class="spinner"></div>Turlar yuklanmoqda...</div>
+    </div>
+  </div>
+
+  <div class="how-section">
+    <div class="how-title">Qanday ishlaydi? 🤔</div>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="step
