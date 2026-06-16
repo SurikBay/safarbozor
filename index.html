@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafarBozor — To'g'ri narx, yaxshi tanlov</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  :root {
+    --navy: #1a2f5e;
+    --orange: #f47c20;
+    --orange-light: #ff9a3c;
+    --white: #ffffff;
+    --gray: #6b7280;
+    --light: #f9fafb;
+    --border: #e5e7eb;
+    --sky: #e8f4fd;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--navy); }
+
+  nav {
+    background: white; padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--navy), #2d4a8a); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .logo-text { font-size: 20px; font-weight: 800; }
+  .logo-text .s1 { color: var(--navy); }
+  .logo-text .s2 { color: var(--orange); }
+  .nav-btn { background: var(--orange); color: white; border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .hero { background: linear-gradient(135deg, #1a2f5e 0%, #2d4a8a 100%); padding: 48px 20px 56px; text-align: center; }
+  .hero-badge { display: inline-block; background: rgba(244,124,32,0.2); border: 1px solid rgba(244,124,32,0.4); color: #ff9a3c; font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; margin-bottom: 16px; }
+  .hero h1 { color: white; font-size: 28px; font-weight: 800; line-height: 1.3; margin-bottom: 10px; }
+  .hero h1 .accent { color: #ff9a3c; }
+  .hero p { color: rgba(255,255,255,0.75); font-size: 15px; margin-bottom: 28px; }
+  .search-box { background: white; border-radius: 16px; padding: 16px; max-width: 500px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+  .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .search-input { flex: 1; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif; }
+  .search-input:focus { border-color: var(--orange); }
+  .search-select { border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 10px; font-size: 13px; outline: none; font-family: 'Inter', sans-serif; background: white; }
+  .search-btn { width: 100%; background: linear-gradient(135deg, var(--orange), #ff9a3c); color: white; border: none; border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  .stats { background: white; padding: 16px 20px; display: flex; justify-content: space-around; border-bottom: 1px solid var(--border); }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 20px; font-weight: 800; color: var(--orange); }
+  .stat-label { font-size: 11px; color: var(--gray); }
+
+  .section { padding: 24px 16px; }
+  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+
+  .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+  .categories::-webkit-scrollbar { display: none; }
+  .cat-card { flex-shrink: 0; background: white; border: 2px solid var(--border); border-radius: 14px; padding: 14px 18px; text-align: center; cursor: pointer; min-width: 85px; transition: all 0.2s; }
+  .cat-card.active, .cat-card:hover { border-color: var(--orange); background: #fff8f2; }
+  .cat-icon { font-size: 26px; margin-bottom: 6px; }
+  .cat-name { font-size: 12px; font-weight: 600; }
+
+  .filter-bar { background: white; padding: 12px 16px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .filter-chip { flex-shrink: 0; border: 1.5px solid var(--border); background: white; border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+  .filter-chip.active { border-color: var(--orange); background: #fff8f2; color: var(--orange); }
+
+  .tours-grid { display: flex; flex-direction: column; gap: 14px; }
+  .tour-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid var(--border); }
+  .tour-img { width: 100%; height: 160px; display: flex; align-items: center; justify-content: center; font-size: 70px; position: relative; cursor: pointer; }
+  .tour-badge { position: absolute; top: 12px; left: 12px; color: white; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: var(--orange); }
+  .tour-body { padding: 14px; }
+  .tour-company { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .co-logo { width: 24px; height: 24px; background: var(--navy); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 700; }
+  .co-name { font-size: 12px; color: var(--gray); }
+  .tour-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; cursor: pointer; }
+  .tour-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .tag { font-size: 11px; color: var(--gray); background: var(--light); padding: 3px 8px; border-radius: 6px; }
+  .tour-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border); }
+  .tour-price { font-size: 20px; font-weight: 800; color: var(--orange); }
+  .tour-price small { font-size: 12px; color: var(--gray); font-weight: 400; }
+  .tour-btns { display: flex; gap: 8px; }
+  .btn-cmp { border: 1.5px solid var(--navy); background: transparent; color: var(--navy); border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .btn-cmp.on { background: var(--navy); color: white; }
+  .btn-detail { background: linear-gradient(135deg, var(--orange), #ff9a3c); color: white; border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  .loading { text-align: center; padding: 40px; color: var(--gray); }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .empty { text-align: center; padding: 48px 20px; color: var(--gray); }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+
+  .how-section { background: linear-gradient(135deg, var(--navy), #2d4a8a); padding: 32px 16px; }
+  .how-title { color: white; font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 24px; }
+  .how-step { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 16px; display: flex; gap: 14px; margin-bottom: 12px; }
+  .step-num { background: var(--orange); color: white; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; flex-shrink: 0; }
+  .step-text h4 { color: white; font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .step-text p { color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.5; }
+
+  footer { background: var(--navy); color: rgba(255,255,255,0.7); padding: 28px 16px; text-align: center; }
+  .footer-logo { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .footer-logo span { color: var(--orange); }
+  footer p { font-size: 13px; margin-bottom: 16px; }
+  .footer-copy { font-size: 12px; color: rgba(255,255,255,0.4); }
+
+  /* DETAIL */
+  .detail-img { height: 220px; display: flex; align-items: center; justify-content: center; font-size: 80px; position: relative; }
+  .back-btn { position: absolute; top: 16px; left: 16px; background: rgba(0,0,0,0.4); color: white; border: none; border-radius: 10px; padding: 8px 14px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .detail-body { padding: 20px 16px; }
+  .detail-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .detail-price { font-size: 28px; font-weight: 800; color: var(--orange); margin-bottom: 16px; }
+  .detail-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .detail-tag { background: var(--sky); color: var(--navy); padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; }
+  .detail-desc { font-size: 14px; color: var(--gray); line-height: 1.7; margin-bottom: 20px; }
+  .co-box { background: var(--light); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+  .co-box h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .co-box p { font-size: 13px; color: var(--gray); }
+  .btn-call { width: 100%; background: linear-gradient(135deg, var(--orange), #ff9a3c); color: white; border: none; border-radius: 12px; padding: 15px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; margin-bottom: 10px; }
+  .btn-wa { width: 100%; background: #25d366; color: white; border: none; border-radius: 12px; padding: 13px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  /* ADMIN */
+  .admin-header { background: var(--navy); color: white; padding: 20px 16px; text-align: center; }
+  .admin-header h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .admin-header p { font-size: 13px; opacity: 0.7; }
+  .admin-form { padding: 20px 16px; }
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; }
+  .form-input, .form-select, .form-textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 14px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif; color: var(--navy); background: white; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--orange); }
+  .form-textarea { min-height: 90px; resize: vertical; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-check { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .form-check input { width: 18px; height: 18px; accent-color: var(--orange); }
+  .form-check label { font-size: 14px; font-weight: 500; }
+  .btn-submit { width: 100%; background: linear-gradient(135deg, var(--orange), #ff9a3c); color: white; border: none; border-radius: 12px; padding: 15px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 8px; }
+  .btn-back { width: 100%; border: 1.5px solid var(--border); background: transparent; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 10px; }
+  .alert { padding: 12px 16px; border-radius: 10px; font-size: 14px; font-weight: 500; margin-bottom: 14px; display: none; }
+  .alert.ok { background: #d1fae5; color: #065f46; display: block; }
+  .alert.err { background: #fee2e2; color: #991b1b; display: block; }
+
+  .compare-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--navy); color: white; padding: 12px 16px; display: none; align-items: center; justify-content: space-between; z-index: 200; }
+  .compare-bar.show { display: flex; }
+  .btn-do-cmp { background: var(--orange); color: white; border: none; border-radius: 8px; padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: flex-end; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: white; width: 100%; border-radius: 20px 20px 0 0; padding: 20px; max-height: 80vh; overflow-y: auto; }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+  .modal-title { font-size: 18px; font-weight: 800; text-align: center; margin-bottom: 16px; }
+  .cmp-item { border: 1.5px solid var(--border); border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .cmp-item h4 { font-size: 14px; font-weight: 700; }
+  .cmp-item p { font-size: 12px; color: var(--gray); }
+  .cmp-price { font-size: 18px; font-weight: 800; color: var(--orange); }
+  .btn-close { width: 100%; border: 1.5px solid var(--border); background: transparent; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 8px; }
+
+  .bg1{background:linear-gradient(135deg,#667eea,#764ba2)}
+  .bg2{background:linear-gradient(135deg,#11998e,#38ef7d)}
+  .bg3{background:linear-gradient(135deg,#f7971e,#ffd200)}
+  .bg4{background:linear-gradient(135deg,#fc5c7d,#6a3093)}
+  .bg5{background:linear-gradient(135deg,#43cea2,#185a9d)}
+  .bg6{background:linear-gradient(135deg,#ee9ca7,#764ba2)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo" onclick="goHome()">
+    <div class="logo-icon">✈️</div>
+    <div class="logo-text"><span class="s1">Safar</span><span class="s2">Bozor</span></div>
+  </div>
+  <button class="nav-btn" onclick="showPage('admin')">+ Tur qo'shish</button>
+</nav>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-badge">🇺🇿 O'zbekiston №1 tur agregatori</div>
+    <h1>Eng yaxshi turni<br><span class="accent">eng qulay narxda</span> toping</h1>
+    <p>100+ kompaniyaning tur paketlarini solishtiring</p>
+    <div class="search-box">
+      <div class="search-row">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Manzil qidiring...">
+        <select class="search-select" id="catFilter">
+          <option value="">Barchasi</option>
+          <option>Yevropa</option>
+          <option>Osiyo</option>
+          <option>Haj/Umra</option>
+          <option>Dengiz</option>
+          <option>Ichki</option>
+        </select>
+      </div>
+      <button class="search-btn" onclick="doSearch()">🔍 Turlarni qidirish</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-item"><div class="stat-num" id="statTours">...</div><div class="stat-label">Tur paketi</div></div>
+    <div class="stat-item"><div class="stat-num" id="statCo">...</div><div class="stat-label">Kompaniya</div></div>
+    <div class="stat-item"><div class="stat-num">45+</div><div class="stat-label">Mamlakat</div></div>
+    <div class="stat-item"><div class="stat-num">Bepul</div><div class="stat-label">Xizmat</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🌍 Yo'nalishlar</div>
+    <div class="categories">
+      <div class="cat-card active" onclick="filterCat(this,'')"><div class="cat-icon">🌐</div><div class="cat-name">Barchasi</div></div>
+      <div class="cat-card" onclick="filterCat(this,'Yevropa')"><div class="cat-icon">🏰</div><div class="cat-name">Yevropa</div></div>
+      <div class="cat-card" onclick="filterCat(this,'Osiyo')"><div class="cat-icon">🏯</div><div class="cat-name">Osiyo</div></div>
+      <div class="cat-card" onclick="filterCat(this,'Haj/Umra')"><div class="cat-icon">🕌</div><div class="cat-name">Haj/Umra</div></div>
+      <div class="cat-card" onclick="filterCat(this,'Dengiz')"><div class="cat-icon">🏖️</div><div class="cat-name">Dengiz</div></div>
+      <div class="cat-card" onclick="filterCat(this,'Ichki')"><div class="cat-icon">🏔️</div><div class="cat-name">Ichki</div></div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-chip active" onclick="sortBy(this,'new')">🆕 Yangi</button>
+    <button class="filter-chip" onclick="sortBy(this,'cheap')">💸 Arzon</button>
+    <button class="filter-chip" onclick="sortBy(this,'exp')">💎 Qimmat</button>
+    <button class="filter-chip" onclick="sortBy(this,'flight')">✈️ Aviachipta</button>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔥 Tur paketlar</div>
+    <div class="tours-grid" id="toursGrid">
+      <div class="loading"><div class="spinner"></div>Turlar yuklanmoqda...</div>
+    </div>
+  </div>
+
+  <div class="how-section">
+    <div class="how-title">Qanday ishlaydi? 🤔</div>
+    <div class="how-step"><div class="step-num">1</div><div class="step-text"><h4>Tur toping</h4><p>Manzil yoki yo'nalish bo'yicha qidiring</p></div></div>
+    <div class="how-step"><div class="step-num">2</div><div class="step-text"><h4>Solishtiring</h4><p>Bir nechta turni tanlang va narxlarini solishtiring</p></div></div>
+    <div class="how-step"><div class="step-num">3</div><div class="step-text"><h4>Bog'laning</h4><p>Kompaniya bilan to'g'ridan-to'g'ri bog'laning</p></div></div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Safar<span>Bozor</span></div>
+    <p>O'zbekistondagi eng yirik tur agregatori.</p>
+    <div class="footer-copy">© 2025 SafarBozor</div>
+  </footer>
+</div>
+
+<!-- DETAIL -->
+<div id="page-detail" class="page">
+  <div class="detail-img" id="detailImg">
+    <button class="back-btn" onclick="goHome()">← Orqaga</button>
+  </div>
+  <div class="detail-body" id="detailBody"></div>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="page">
+  <div class="admin-header">
+    <h2>➕ Yangi tur qo'shish</h2>
+    <p>Tur ma'lumotlarini kiriting</p>
+  </div>
+  <div class="admin-form">
+    <div id="formAlert" class="alert"></div>
+    <div class="form-group">
+      <label class="form-label">Kompaniya *</label>
+      <select class="form-select" id="coSelect"><option value="">Tanlang...</option></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tur nomi *</label>
+      <input type="text" class="form-input" id="fTitle" placeholder="Masalan: Paris + Rim 10 kun">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Manzil *</label>
+        <input type="text" class="form-input" id="fDest" placeholder="Fransiya">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kategoriya *</label>
+        <select class="form-select" id="fCat">
+          <option value="">Tanlang</option>
+          <option>Yevropa</option><option>Osiyo</option>
+          <option>Haj/Umra</option><option>Dengiz</option><option>Ichki</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Narx (USD) *</label>
+        <input type="number" class="form-input" id="fPrice" placeholder="890">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kunlar</label>
+        <input type="number" class="form-input" id="fDays" placeholder="7">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mehmonxona</label>
+      <select class="form-select" id="fStars">
+        <option value="">Tanlang</option>
+        <option value="3">3 yulduz</option>
+        <option value="4">4 yulduz</option>
+        <option value="5">5 yulduz</option>
+      </select>
+    </div>
+    <div class="form-check">
+      <input type="checkbox" id="fFlight">
+      <label for="fFlight">✈️ Aviachipta kiritilgan</label>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Badge</label>
+      <select class="form-select" id="fBadge">
+        <option value="">Yo'q</option>
+        <option value="🔥 Eng ko'p sotilgan">🔥 Eng ko'p sotilgan</option>
+        <option value="💰 A
