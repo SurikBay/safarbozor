@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafarBozor</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,sans-serif;background:#f9fafb;color:#1a2f5e;}
+nav{background:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.logo-box{width:40px;height:40px;background:#1a2f5e;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.logo-text{font-size:18px;font-weight:800;}
+.logo-text b{color:#1a2f5e;}.logo-text s{color:#f47c20;text-decoration:none;}
+.nav-btn{background:#f47c20;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;}
+.page{display:none;}.page.active{display:block;}
+.hero{background:linear-gradient(135deg,#1a2f5e,#2d4a8a);padding:40px 16px 50px;text-align:center;}
+.hero h1{color:#fff;font-size:26px;font-weight:800;line-height:1.3;margin-bottom:8px;}
+.hero h1 i{color:#ff9a3c;font-style:normal;}
+.hero p{color:rgba(255,255,255,0.75);font-size:14px;margin-bottom:24px;}
+.sbox{background:#fff;border-radius:14px;padding:14px;max-width:460px;margin:0 auto;box-shadow:0 6px 24px rgba(0,0,0,0.2);}
+.srow{display:flex;gap:8px;margin-bottom:10px;}
+.sinput{flex:1;border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-size:14px;outline:none;}
+.sselect{border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 10px;font-size:13px;outline:none;background:#fff;}
+.sbtn{width:100%;background:#f47c20;color:#fff;border:none;border-radius:8px;padding:11px;font-size:15px;font-weight:700;cursor:pointer;}
+.stats{background:#fff;display:flex;justify-content:space-around;padding:14px;border-bottom:1px solid #e5e7eb;}
+.snum{font-size:20px;font-weight:800;color:#f47c20;text-align:center;}
+.slbl{font-size:11px;color:#6b7280;text-align:center;}
+.sec{padding:20px 14px;}
+.sec-t{font-size:17px;font-weight:700;margin-bottom:14px;}
+.cats{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;}
+.cats::-webkit-scrollbar{display:none;}
+.cat{flex-shrink:0;background:#fff;border:2px solid #e5e7eb;border-radius:12px;padding:12px 16px;text-align:center;cursor:pointer;min-width:80px;}
+.cat.on{border-color:#f47c20;background:#fff8f2;}
+.ci{font-size:24px;margin-bottom:4px;}.cn{font-size:11px;font-weight:600;}
+.fbar{background:#fff;padding:10px 14px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;}
+.fbar::-webkit-scrollbar{display:none;}
+.chip{flex-shrink:0;border:1.5px solid #e5e7eb;background:#fff;border-radius:20px;padding:5px 12px;font-size:13px;cursor:pointer;white-space:nowrap;}
+.chip.on{border-color:#f47c20;background:#fff8f2;color:#f47c20;}
+.grid{display:flex;flex-direction:column;gap:12px;}
+.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.06);border:1px solid #e5e7eb;}
+.cimg{width:100%;height:150px;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;cursor:pointer;color:#fff;font-weight:800;}
+.cbadge{position:absolute;top:10px;left:10px;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:16px;background:rgba(0,0,0,0.4);}
+.cbody{padding:12px;}
+.cco{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.cico{width:22px;height:22px;background:#1a2f5e;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700;}
+.cconame{font-size:12px;color:#6b7280;}
+.ctitle{font-size:14px;font-weight:700;margin-bottom:8px;line-height:1.3;cursor:pointer;}
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.ctag{font-size:11px;color:#6b7280;background:#f9fafb;padding:2px 7px;border-radius:5px;}
+.cfoot{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #e5e7eb;}
+.cprice{font-size:19px;font-weight:800;color:#f47c20;}
+.cprice small{font-size:11px;color:#6b7280;font-weight:400;}
+.cbtns{display:flex;gap:6px;}
+.bcmp{border:1.5px solid #1a2f5e;background:transparent;color:#1a2f5e;border-radius:7px;padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;}
+.bcmp.on{background:#1a2f5e;color:#fff;}
+.bdet{background:#f47c20;color:#fff;border:none;border-radius:7px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+.empty{text-align:center;padding:40px 16px;color:#6b7280;}
+.how{background:linear-gradient(135deg,#1a2f5e,#2d4a8a);padding:28px 14px;}
+.how-t{color:#fff;font-size:18px;font-weight:800;text-align:center;margin-bottom:20px;}
+.step{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:14px;display:flex;gap:12px;margin-bottom:10px;}
+.sn{background:#f47c20;color:#fff;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;}
+.st h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:3px;}
+.st p{color:rgba(255,255,255,0.7);font-size:12px;line-height:1.5;}
+footer{background:#1a2f5e;color:rgba(255,255,255,0.7);padding:24px 14px;text-align:center;}
+.flogo{font-size:20px;font-weight:800;margin-bottom:6px;}
+.flogo span{color:#f47c20;}
+footer p{font-size:13px;margin-bottom:6px;}
+.fcopy{font-size:11px;color:rgba(255,255,255,0.4);}
+.dimg{height:200px;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;color:#fff;font-weight:800;}
+.dbk{position:absolute;top:14px;left:14px;background:rgba(0,0,0,0.4);color:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;}
+.dbody{padding:16px;}
+.dtitle{font-size:20px;font-weight:800;margin-bottom:6px;}
+.dprice{font-size:26px;font-weight:800;color:#f47c20;margin-bottom:14px;}
+.dtags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+.dtag{background:#e8f4fd;color:#1a2f5e;padding:5px 11px;border-radius:7px;font-size:12px;font-weight:500;}
+.ddesc{font-size:13px;color:#6b7280;line-height:1.7;margin-bottom:16px;}
+.dco{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:14px;}
+.dco h4{font-size:14px;font-weight:700;margin-bottom:3px;}
+.dco p{font-size:12px;color:#6b7280;}
+.bcall{width:100%;background:#f47c20;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;display:block;margin-bottom:8px;}
+.bwa{width:100%;background:#25d366;color:#fff;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;display:block;}
+.aheader{background:#1a2f5e;color:#fff;padding:18px 14px;text-align:center;}
+.aheader h2{font-size:18px;font-weight:800;margin-bottom:3px;}
+.aheader p{font-size:12px;opacity:0.7;}
+.aform{padding:16px;}
+.flbl{font-size:13px;font-weight:600;margin-bottom:5px;display:block;}
+.fgrp{margin-bottom:12px;}
+.finput,.fsel,.ftxt{width:100%;border:1.5px solid #e5e7eb;border-radius:8px;padding:10px 12px;font-size:14px;outline:none;color:#1a2f5e;background:#fff;}
+.ftxt{min-height:80px;resize:vertical;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fchk{display:flex;align-items:center;gap:7px;margin-bottom:12px;}
+.fchk input{width:17px;height:17px;accent-color:#f47c20;}
+.fchk label{font-size:13px;font-weight:500;}
+.bsub{width:100%;background:#f47c20;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;}
+.bbk{width:100%;border:1.5px solid #e5e7eb;background:transparent;border-radius:8px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;}
+.al{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;margin-bottom:12px;display:none;}
+.al.ok{background:#d1fae5;color:#065f46;display:block;}
+.al.er{background:#fee2e2;color:#991b1b;display:block;}
+.cbar{position:fixed;bottom:0;left:0;right:0;background:#1a2f5e;color:#fff;padding:11px 14px;display:none;align-items:center;justify-content:space-between;z-index:200;}
+.cbar.on{display:flex;}
+.bcdo{background:#f47c20;color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;}
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;align-items:flex-end;}
+.mov.on{display:flex;}
+.mo{background:#fff;width:100%;border-radius:18px 18px 0 0;padding:18px;max-height:75vh;overflow-y:auto;}
+.moh{width:34px;height:4px;background:#e5e7eb;border-radius:2px;margin:0 auto 14px;}
+.mot{font-size:17px;font-weight:800;text-align:center;margin-bottom:14px;}
+.moi{border:1.5px solid #e5e7eb;border-radius:10px;padding:10px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.moi h4{font-size:13px;font-weight:700;}
+.moi p{font-size:11px;color:#6b7280;}
+.moip{font-size:17px;font-weight:800;color:#f47c20;margin-left:8px;}
+.bmc{width:100%;border:1.5px solid #e5e7eb;background:transparent;border-radius:8px;padding:10px;font-size:13px;cursor:pointer;margin-top:6px;}
+.bg1{background:#667eea;}.bg2{background:#11998e;}.bg3{background:#f7971e;}
+.bg4{background:#fc5c7d;}.bg5{background:#43cea2;}.bg6{background:#9b59b6;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo" onclick="goHome()">
+    <div class="logo-box">&#9992;</div>
+    <div class="logo-text"><b>Safar</b><s>Bozor</s></div>
+  </div>
+  <button class="nav-btn" onclick="showPage('admin')">+ Tur qoshish</button>
+</nav>
+
+<div id="page-home" class="page active">
+  <div class="hero">
+    <h1>Eng yaxshi turni<br><i>eng qulay narxda</i> toping</h1>
+    <p>100+ kompaniyaning tur paketlarini solishtiring</p>
+    <div class="sbox">
+      <div class="srow">
+        <input type="text" class="sinput" id="si" placeholder="Manzil qidiring...">
+        <select class="sselect" id="sf">
+          <option value="">Barchasi</option>
+          <option>Yevropa</option><option>Osiyo</option>
+          <option>Haj/Umra</option><option>Dengiz</option><option>Ichki</option>
+        </select>
+      </div>
+      <button class="sbtn" onclick="doSearch()">Turlarni qidirish</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div><div class="snum" id="snt">6+</div><div class="slbl">Tur paketi</div></div>
+    <div><div class="snum">6+</div><div class="slbl">Kompaniya</div></div>
+    <div><div class="snum">45+</div><div class="slbl">Mamlakat</div></div>
+    <div><div class="snum">Bepul</div><div class="slbl">Xizmat</div></div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Yonalishlar</div>
+    <div class="cats">
+      <div class="cat on" onclick="fcat(this,'')"><div class="ci">&#127758;</div><div class="cn">Barchasi</div></div>
+      <div class="cat" onclick="fcat(this,'Yevropa')"><div class="ci">&#127963;</div><div class="cn">Yevropa</div></div>
+      <div class="cat" onclick="fcat(this,'Osiyo')"><div class="ci">&#127970;</div><div class="cn">Osiyo</div></div>
+      <div class="cat" onclick="fcat(this,'Haj/Umra')"><div class="ci">&#128332;</div><div class="cn">Haj/Umra</div></div>
+      <div class="cat" onclick="fcat(this,'Dengiz')"><div class="ci">&#127958;</div><div class="cn">Dengiz</div></div>
+      <div class="cat" onclick="fcat(this,'Ichki')"><div class="ci">&#9968;</div><div class="cn">Ichki</div></div>
+    </div>
+  </div>
+  <div class="fbar">
+    <button class="chip on" onclick="fsort(this,'new')">Yangi</button>
+    <button class="chip" onclick="fsort(this,'cheap')">Arzon</button>
+    <button class="chip" onclick="fsort(this,'exp')">Qimmat</button>
+    <button class="chip" onclick="fsort(this,'flight')">Aviachipta</button>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Tur paketlar</div>
+    <div class="grid" id="grid"></div>
+  </div>
+  <div class="how">
+    <div class="how-t">Qanday ishlaydi?</div>
+    <div class="step"><div class="sn">1</div><div class="st"><h4>Tur toping</h4><p>Manzil yoki yonalish boyicha qidiring</p></div></div>
+    <div class="step"><div class="sn">2</div><div class="st"><h4>Solishtiring</h4><p>Bir nechta turni tanlang va narxlarini solishtiring</p></div></div>
+    <div class="step"><div class="sn">3</div><div class="st"><h4>Boglaning</h4><p>Kompaniya bilan togri boglanish imkoniyati</p></div></div>
+  </div>
+  <footer>
+    <div class="flogo">Safar<span>Bozor</span></div>
+    <p>Ozbekistondagi eng yirik tur agregatori.</p>
+    <div class="fcopy">2025 SafarBozor</div>
+  </footer>
+</div>
+
+<div id="page-detail" class="page">
+  <div class="dimg" id="dimg"><button class="dbk" onclick="goHome()">Orqaga</button></div>
+  <div class="dbody" id="dbody"></div>
+</div>
+
+<div id="page-admin" class="page">
+  <div class="aheader"><h2>Yangi tur qoshish</h2><p>Tur malumotlarini kiriting</p></div>
+  <div class="aform">
+    <div id="al" class="al"></div>
+    <div class="fgrp"><label class="flbl">Kompaniya nomi</label><input type="text" class="finput" id="fco" placeholder="Masalan: Silk Travel"></div>
+    <div class="fgrp"><label class="flbl">Telefon</label><input type="text" class="finput" id="fph" placeholder="+998901234567"></div>
+    <div class="fgrp"><label class="flbl">Tur nomi</label><input type="text" class="finput" id="fti" placeholder="Masalan: Paris 10 kun"></div>
+    <div class="frow">
+      <div class="fgrp"><label class="flbl">Manzil</label><input type="text" class="finput" id="fde" placeholder="Fransiya"></div>
+      <div class="fgrp"><label class="flbl">Kategoriya</label>
+        <select class="fsel" id="fca">
+          <option value="">Tanlang</option>
+          <option>Yevropa</option><option>Osiyo</option>
+          <option>Haj/Umra</option><option>Dengiz</option><option>Ichki</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fgrp"><label class="flbl">Narx USD</label><input type="number" class="finput" id="fpr" placeholder="890"></div>
+      <div class="fgrp"><label class="flbl">Kunlar</label><input type="number" class="finput" id="fdy" placeholder="7"></div>
+    </div>
+    <div class="fgrp"><label class="flbl">Mehmonxona</label>
+      <select class="fsel" id="fst">
+        <option value="">Tanlang</option>
+        <option value="3">3 yulduz</option>
+        <option value="4">4 yulduz</option>
+        <option value="5">5 yulduz</option>
+      </select>
+    </div>
+    <div class="fchk"><input type="checkbox" id="ffl"><label for="ffl">Aviachipta narxga kiritilgan</label></div>
+    <div class="fgrp"><label class="flbl">Badge</label>
+      <select class="fsel" id="fba">
+        <option value="">Yoq</option>
+        <option value="Eng kop sotilgan">Eng kop sotilgan</option>
+        <option value="Arzon">Arzon</option>
+        <option value="Yangi">Yangi</option>
+        <option value="Premium">Premium</option>
+      </select>
+    </div>
+    <div class="fgrp"><label class="flbl">Tavsif</label><textarea class="ftxt" id="fds" placeholder="Tur haqida..."></textarea></div>
+    <button class="bsub" onclick="addTour()">Tur qoshish</button>
+    <button class="bbk" onclick="goHome()">Orqaga qaytish</button>
+  </div>
+</div>
+
+<div class="cbar" id="cbar">
+  <div>Solishtirish: <span id="cct">0</span> ta</div>
+  <button class="bcdo" onclick="showCmp()">Solishtirish</button>
+</div>
+
+<div class="mov" id="mov" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="mo">
+    <div class="moh"></div>
+    <div class="mot">Narx solishtirish</div>
+    <div id="mol"></div>
+    <button class="bmc" onclick="document.getElementById('mov').classList.remove('on')">Yopish</button>
+  </div>
+</div>
+
+<script>
+var BG = ["bg1","bg2","bg3","bg4","bg5","bg6"];
+var ICONS = ["P","U","A","S","D","Y","M","T","B","H","K","L"];
+
+var tours = [
+  {id:1, co:"Silk Travel", ph:"+998901234567", ti:"Paris va Rim 10 kun", de:"Fransiya", ca:"Yevropa", pr:1250, dy:10, fl:true, st:4, ba:"Eng kop sotilgan", ds:"Paris va Rim shaharlarini birlashtirgan ajoyib tur."},
+  {id:2, co:"Hajj Tours", ph:"+998902345678", ti:"Umra ziyorati Makka va Madina", de:"Saudi Arabiya", ca:"Haj/Umra", pr:2100, dy:14, fl:true, st:5, ba:"Yangi", ds:"Muqaddas ziyorat safari. 5 yulduzli mehmonxona."},
+  {id:3, co:"Antalya Tour", ph:"+998903456789", ti:"Antalya All Inclusive 7 kun", de:"Turkiya", ca:"Dengiz", pr:890, dy:7, fl:true, st:5, ba:"Arzon", ds:"All inclusive dam olish. Cheksiz ovqat va ichimlik."},
+  {id:4, co:"UzTour", ph:"+998904567890", ti:"Samarqand Buxoro Xiva 4 kun", de:"Ozbekiston", ca:"Ichki", pr:180, dy:4, fl:false, st:3, ba:"", ds:"Ozbekistonning tarixiy shaharlarini kashf eting."},
+  {id:5, co:"Dubai Travel", ph:"+998905678901", ti:"Dubai 5 kun", de:"BAA", ca:"Osiyo", pr:750, dy:5, fl:true, st:4, ba:"Premium", ds:"Dubai ning ajoyib korinishlari va Burj Khalifa."},
+  {id:6, co:"Japan Tours", ph:"+998906789012", ti:"Yaponiya Tokyo Kioto 12 kun", de:"Yaponiya", ca:"Osiyo", pr:2850, dy:12, fl:true, st:4, ba:"Premium", ds:"Yaponiyaning eng gozal shaharlarini kashf eting."}
+];
+
+var cmps = [];
+
+function showPage(p) {
+  var pages = document.querySelectorAll(".page");
+  for (var i = 0; i < pages.length; i++) {
+    pages[i].classList.remove("active");
+  }
+  document.getElementById("page-" + p).classList.add("active");
+  window.scrollTo(0, 0);
+}
+
+function goHome() {
+  showPage("home");
+  draw(tours);
+}
+
+function draw(list) {
+  var g = document.getElementById("grid");
+  document.getElementById("snt").textContent = list.length + "+";
+  if (list.length === 0) {
+    g.innerHTML = "<div class=\"empty\">Tur topilmadi</div>";
+    return;
+  }
+  var html = "";
+  for (var i = 0; i < list.length; i++) {
+    var t = list[i];
+    var bg = BG[i % BG.length];
+    var ic = ICONS[i % ICONS.length];
+    var inc = false;
+    for (var j = 0; j < cmps.length; j++) {
+      if (cmps[j].id === t.id) { inc = true; break; }
+    }
+    html += "<div class=\"card\">";
+    html += "<div class=\"cimg " + bg + "\" onclick=\"detail(" + t.id + ")\">" + ic;
+    if (t.ba) html += "<span class=\"cbadge\">" + t.ba + "</span>";
+    html += "</div>";
+    html += "<div class=\"cbody\">";
+    html += "<div class=\"cco\"><div class=\"cico\">" + t.co.substring(0,2).toUpperCase() + "</div>";
+    html += "<span class=\"cconame\">" + t.co + "</span></div>";
+    html += "<div class=\"ctitle\" onclick=\"detail(" + t.id + ")\">" + t.ti + "</div>";
+    html += "<div class=\"ctags\">";
+    if (t.dy) html += "<span class=\"ctag\">" + t.dy + " kun</span>";
+    if (t.fl) html += "<span class=\"ctag\">Aviachipta</span>";
+    if (t.st) html += "<span class=\"ctag\">" + t.st + " yulduz</span>";
+    if (t.ca) html += "<span class=\"ctag\">" + t.ca + "</span>";
+    html += "</div>";
+    html += "<div class=\"cfoot\">";
+    html += "<div class=\"cprice\">$" + t.pr + "<small>/kishi</small></div>";
+    html += "<div class=\"cbtns\">";
+    html += "<button class=\"bcmp" + (inc ? " on" : "") + "\" onclick=\"togcmp(" + t.id + ")\">&#9878;</button>";
+    html += "<button class=\"bdet\" onclick=\"detail(" + t.id + ")\">Batafsil</button>";
+    html += "</div></div></div></div>";
+  }
+  g.innerHTML = html;
+}
+
+function detail(id) {
+  var t = null;
+  var idx = 0;
+  for (var i = 0; i < tours.length; i++) {
+    if (tours[i].id === id) { t = tours[i]; idx = i; break; }
+  }
+  if (!t) return;
+  var bg = BG[idx % BG.length];
+  var ic = ICONS[idx % ICONS.length];
+  var di = document.getElementById("dimg");
+  di.className = "dimg " + bg;
+  di.innerHTML = "<button class=\"dbk\" onclick=\"goHome()\">Orqaga</button>" + ic;
+  var html = "";
+  html += "<div class=\"dtitle\">" + t.ti + "</div>";
+  html += "<div class=\"dprice\">$" + t.pr + " <span style=\"font-size:15px;color:#6b7280;font-weight:400\">/kishi</span></div>";
+  html += "<div class=\"dtags\">";
+  if (t.dy) html += "<span class=\"dtag\">" + t.dy + " kun</span>";
+  if (t.fl) html += "<span class=\"dtag\">Aviachipta kiritilgan</span>";
+  else html += "<span class=\"dtag\">Aviachipta alohida</span>";
+  if (t.st) html += "<span class=\"dtag\">" + t.st + " yulduz</span>";
+  if (t.de) html += "<
